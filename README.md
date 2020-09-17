@@ -1,5 +1,7 @@
 # 4D_Automark
-change point detection and image segmentation for time series of astrophysical images.
+
+This package implemnents a method for modeling photon counts collected from astronomical sources. Photon counts are binned as 4D grids of voxels (time, energy band and x-y coordinates), and viewed as a time series of non-homogeneous Poisson images. The method aims to detect the location of change points and to estimate the image segmentation for images simultaneously. In the underlying methodology, it is assumed that at each time point, the corresponding 3D image is an unknown 3D piecewise constant function corrupted by Poisson noise. It also assumes that all 3D images between any two adjacent change points (in time domain) share the same unknown 3D piecewise constant function.
+
 
 ## Installation
 ```
