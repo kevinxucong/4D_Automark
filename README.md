@@ -80,7 +80,7 @@ for nb in range(num_band):
     plt.colorbar()
     plt.title('band={}'.format(nb))
 ```
-![Image of fitted images](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_1.png)
+![Image of fitted images](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_git_1.png)
 
 Now we apply backward elimination to get the fitted model with change points. Initial breaks are set to be every possible location.
 
@@ -103,7 +103,7 @@ for _,t in break_ls[:-1]:
 plt.xlabel('time point')
 plt.ylabel('photon count')
 ```
-![Image of change points](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_2.png)
+![Image of change points](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_git_2.png)
 
 
 Supose we want to highlight the key pixels for the 0th band the change point between the 6th and the 7th intervals. (significance level = 0.01)
@@ -118,4 +118,4 @@ plt.imshow(temp_increase,vmin=-1,vmax=1,cmap='RdBu')
 plt.colorbar()
 ```
 
-![Image of highlighted pixels](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_3.png)
+![Image of highlighted pixels](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_git_3.png)
