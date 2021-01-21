@@ -89,6 +89,23 @@ init_breaks = [i for i in range(1,T)]
 final_break_ls, final_label_ls, min_mdl, merge_mdl_curve, K, break_list, label_list, mdl_list = backward_elimination(data, bg, exptimes, init_breaks)
 ```
 
+Plot the light curves as well as the change points.
+```python
+light = np.sum(data, axis=(2,3))
+
+color_ls = ['r', 'y', 'b']
+for nb in range(num_band):
+    plt.semilogy(light[nb], label='band={}'.format(nb), color=color_ls[nb])
+plt.legend(loc='upper left')
+
+for _,t in break_ls[:-1]:
+    plt.plot([t,t],[0, 50000], 'k')
+plt.xlabel('time point')
+plt.ylabel('photon count')
+```
+![Image of change points](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_2.png)
+
+
 Supose we want to highlight the key pixels for the 0th band the change point between the 6th and the 7th intervals. (significance level = 0.01)
 ```python
 label1 = final_label_ls[6]
@@ -101,4 +118,4 @@ plt.imshow(temp_increase,vmin=-1,vmax=1,cmap='RdBu')
 plt.colorbar()
 ```
 
-![Image of highlighted pixels](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_2.png)
+![Image of highlighted pixels](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_for_git_3.png)
