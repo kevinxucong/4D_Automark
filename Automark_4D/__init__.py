@@ -4,6 +4,7 @@ from .local_maxima import *
 from .mdlsegi_poisson_exptime import *
 from .srgrow_poisson_t_multi_band_exptime import *
 from .detection import *
+from .post_hoc_analysis import *
 
 __version__ = "0.0.1"
 __short_description__ = "change point detection and image segmentation for time series of astrophysical images"
