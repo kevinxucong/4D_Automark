@@ -1,12 +1,6 @@
 import numpy as np
 import math
-import os
 from scipy.special import factorial
-# import time
-# import json
-# import itertools
-
-# from multiprocessing import Pool, Lock
 
 from Automark_4D import srgrow_poisson_t_multi_band_exptime
 from Automark_4D import mdlsegi_poisson_exptime
@@ -48,7 +42,8 @@ def get_initial_seed(data, n_grid=8, par_median_smooth=3, par_local_maximum_size
                     label_im[i * n + j] = n_init
     return label_im
 
-def get_fitted(data, bg, exptimes, init_seed_im=None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1):
+
+def get_fitted(data, exptimes, bg, init_seed_im=None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1):
      
     """
     Get the fitted labels and the corresponding MDL
@@ -67,44 +62,29 @@ def get_fitted(data, bg, exptimes, init_seed_im=None, n_grid=8, par_median_smoot
     label_im: (m*n) list, pixel(s) with the same nonnegative 
     """
     num_band, T1, m, n = data.shape
-    observe_im = np.zeros((num_band, T1, m*n))
-    for i in range(m):
-        for j in range(n):
-            observe_im[:, :, i * n + j] = data[:, :, i, j]
-
+    observe_im = data.reshape((num_band, T1,m*n))
+    
     exptimes1 = exptimes
     if not init_seed_im:
         label_im = get_initial_seed(data, n_grid, par_median_smooth, par_local_maximum_size, par_local_maximum_threshold)
     else:
         label_im = init_seed_im
         
-    srgrow_poisson_t_multi_band_exptime.rsgrow(observe_im, label_im, m, n, bg, exptimes1)
+    overseg_label_im = srgrow_poisson_t_multi_band_exptime.rsgrow(observe_im, label_im, m, n, exptimes1, bg)
 
-    a = min(label_im)
-    label_im = [i - a + 1 for i in label_im]
-    num_merge = 1
-    mdl_out_grey = [[0.0] * m * n] * num_band
-    mdl_out_region = [0] * m * n
-    num_over = max(label_im)
-    mdl_curve = [0.0] * 2 * (num_over - num_merge)
-    mdlsegi_poisson_exptime.segment_mdl_ind(observe_im, label_im, m, n, num_merge, num_band, bg, exptimes1,
-                                            mdl_out_region, mdl_out_grey, mdl_curve)
-    num_region = max(mdl_out_region)
-    permtx = mdlsegi_poisson_exptime.init_perimeter_matrix(mdl_out_region, m, n, num_region)
-    graphs = [0] * num_band
-    for nb in range(num_band):
-        graphs[nb] = mdlsegi_poisson_exptime.image_to_graph(observe_im[nb], mdl_out_region, permtx, m, n, num_region, exptimes1)
-    MDL = mdlsegi_poisson_exptime.compute_mdl(graphs, permtx, m, n, num_band, bg)
+    MDL, mdl_out_region = mdlsegi_poisson_exptime.segment_mdl_ind(observe_im, overseg_label_im, m, n, exptimes1, bg)
+    
     return MDL, mdl_out_region
 
-def backward_elimination(data, bg, exptimes, init_breaks, init_seed_im=None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1):
+
+def backward_elimination(data, exptimes, bg, init_breaks, init_seed_im=None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1):
     """
     Using backward elimination to remove redundant change points.
     
     Input:
     data: (num_band, T1, m, n) np.array
-    bg: num_band list
     exptimes: T1 list
+    bg: num_band list
     init_breaks: list, 1 <= init_breaks[i] < init_breaks[j] < T for all i < j
     init_seed_im: (m*n) list or None
     n_grid: nonnegative int, number of regular grids per row/column
@@ -114,15 +94,6 @@ def backward_elimination(data, bg, exptimes, init_breaks, init_seed_im=None, n_g
     
     Output:
     label_im: (m*n) list, pixel(s) with the same nonnegative 
-    
-    final_break_ls: list, change points after backward elimination
-    final_label_ls: list of lists, each element denotes the labels for that time interval
-    min_mdl: float, MDL for the final fitted model
-    merge_mdl_curve: list, each element denotes the MDL for a model during the backward elimination procedure.
-    K: int, the location during the backward elimination procedure that reach the minimal MDL.
-    break_list: list, change points for all the models during the process
-    label_list, list, labels for all the models during the process
-    mdl_list, list, MDLs for all the models during the process
     """
     num_band, T, m, n = data.shape
     breaks = init_breaks
@@ -145,7 +116,7 @@ def backward_elimination(data, bg, exptimes, init_breaks, init_seed_im=None, n_g
     for l in range(M):
         data1 = data[:, break_list[0][l][0]:break_list[0][l][1]]
         exptimes1 = exptimes[break_list[0][l][0]:break_list[0][l][1]]
-        MDL, mdl_out_region = get_fitted(data1, bg, exptimes1, init_seed_im, n_grid, par_median_smooth, par_local_maximum_size, par_local_maximum_threshold)
+        MDL, mdl_out_region = get_fitted(data1, exptimes1, bg, init_seed_im, n_grid, par_median_smooth, par_local_maximum_size, par_local_maximum_threshold)
         
         label_list[0][l] = mdl_out_region
         mdl_list[0][l] = MDL
@@ -161,7 +132,7 @@ def backward_elimination(data, bg, exptimes, init_breaks, init_seed_im=None, n_g
             else:
                 data1 = data[:, break_list[q - 1][r][0]:break_list[q - 1][r + 1][1]]
                 exptimes1 = exptimes[break_list[q - 1][r][0]:break_list[q - 1][r + 1][1]]
-                MDL, mdl_out_region = get_fitted(data1, bg, exptimes1, None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1)
+                MDL, mdl_out_region = get_fitted(data1, exptimes1, bg, None, n_grid=8, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1)
                 temp_label_list[r] = mdl_out_region
                 temp_mdl_list[r] = MDL
                 
@@ -197,4 +168,3 @@ def backward_elimination(data, bg, exptimes, init_breaks, init_seed_im=None, n_g
     final_break_ls = break_list[K]
     final_label_ls = label_list[K]
     return final_break_ls, final_label_ls, min_mdl, merge_mdl_curve, K, break_list, label_list, mdl_list
-

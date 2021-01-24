@@ -68,7 +68,7 @@ Now we fit a homogeneouse model for time interval [0, 6). First we need to settl
 
 ```python
 bg = [1e-12 for _ in range(num_band)]
-mdl, label = get_fitted(data[:,0:6], bg, exptimes[0:6], init_seed_im=None, n_grid=3, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1)
+mdl, label = get_fitted(data[:,0:6], exptimes[0:6], bg, init_seed_im=None, n_grid=3, par_median_smooth=3, par_local_maximum_size=5, par_local_maximum_threshold=1)
 ```
 
 Plot the fitted images. 
@@ -86,7 +86,7 @@ Now we apply backward elimination to get the fitted model with change points. In
 
 ```python
 init_breaks = [i for i in range(1,T)]
-final_break_ls, final_label_ls, min_mdl, merge_mdl_curve, K, break_list, label_list, mdl_list = backward_elimination(data, bg, exptimes, init_breaks)
+final_break_ls, final_label_ls, min_mdl, merge_mdl_curve, K, break_list, label_list, mdl_list = backward_elimination(data, exptimes, bg, init_breaks)
 ```
 
 Plot the light curves as well as the change points.

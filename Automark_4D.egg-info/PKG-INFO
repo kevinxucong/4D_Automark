@@ -1,6 +1,6 @@
 Metadata-Version: 1.2
 Name: Automark-4D
-Version: 0.0.1
+Version: 1.0.0
 Summary: change point detection and image segmentation for time series of astrophysical images
 Home-page: https://github.com/kevinxucong/
 Author: Cong Xu
@@ -8,7 +8,7 @@ Author-email: cngxu@ucdavis.edu
 Maintainer: Cong Xu
 Maintainer-email: cngxu@ucdavis.edu
 License: MIT
-Download-URL: https://github.com/kevinxucong//tarball/2020-09-16
+Download-URL: https://github.com/kevinxucong//tarball/2021-01-24
 Description: No long description!
 Platform: Windows
 Platform: MacOS

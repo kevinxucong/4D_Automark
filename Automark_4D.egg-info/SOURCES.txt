@@ -1,11 +1,10 @@
 README.md
 setup.py
-Automark_4D/SetADT.py
 Automark_4D/__init__.py
-Automark_4D/basic.py
 Automark_4D/detection.py
 Automark_4D/local_maxima.py
 Automark_4D/mdlsegi_poisson_exptime.py
+Automark_4D/post_hoc_analysis.py
 Automark_4D/srgrow_poisson_t_multi_band_exptime.py
 Automark_4D.egg-info/PKG-INFO
 Automark_4D.egg-info/SOURCES.txt
