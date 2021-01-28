@@ -119,3 +119,8 @@ plt.colorbar()
 ```
 
 ![Image of highlighted pixels](https://github.com/kevinxucong/4D_Automark/blob/master/readme/plot_git_3.png)
+
+
+## References
+* Cong Xu, Hans Moritz Günther, Vinay L. Kashyap, Thomas C. M. Lee and Andreas Zezas
+Change point detection and image segmentation for time series of astrophysical images. [\[arXiv\]](https://arxiv.org/abs/2101.11202)
