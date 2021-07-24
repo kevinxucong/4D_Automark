@@ -118,7 +118,7 @@ class TLGRAPH:
         
         delta_neglogl = np.sum(np.sum(x1, axis=1) * np.log(np.maximum(np.sum(x1, axis=1) / (a1*np.sum(exptimes)), bg)) + np.dot(x1, np.log(exptimes))) + \
                          np.sum(np.sum(x2, axis=1) * np.log(np.maximum(np.sum(x2, axis=1) / (a2*np.sum(exptimes)), bg)) + np.dot(x2, np.log(exptimes))) - \
-                         np.sum(np.sum(x1+x2, axis=1) * np.log(np.maximum(np.sum(x1+x2, axis=1) / ((a1+a2)*np.sum(exptimes)), bg)) - np.dot(x1+x2, np.log(exptimes)))
+                         np.sum(np.sum(x1+x2, axis=1) * np.log(np.maximum(np.sum(x1+x2, axis=1) / ((a1+a2)*np.sum(exptimes)), bg)) + np.dot(x1+x2, np.log(exptimes)))
         delta_logarea = np.log(a1 + a2) - np.log(a1) - np.log(a2)- np.log(self.T)
         delta_mdl = - np.log(self.mn) - np.log(3)/2.0 * 2 * self.boundary_d[r1, r2] + self.num_band*delta_logarea/2.0 + delta_neglogl
         return delta_mdl
