@@ -4,6 +4,8 @@
 
 # use priority queue (heapq) 
 
+# update .sort_n() in case when vals are the same, wrong element is put in the tail
+
 import numpy as np
 import heapq
 from scipy.special import factorial
@@ -31,12 +33,14 @@ class GREGION:
             exptimes = np.array(self.exptimes)
             # negative log likelihood
             min_val = float('inf')
+            min_val_pos = -1
             idx = 0
             for i,x in enumerate(self.pxl_lst):
                 val = -np.sum(np.log(np.dot(par[:,None], exptimes[None,:]))*x.value) + np.sum(np.array(list(map(fac_robust, x.value.flatten()))))
-                if val < min_val:
+                if val < min_val or (val == min_val and x.pos > min_val_pos):
                     idx = i
                     min_val = val
+                    min_val_pos = x.pos
             self.pxl_lst[-1], self.pxl_lst[idx] = self.pxl_lst[idx], self.pxl_lst[-1]
         
     def remove_tail(self):
